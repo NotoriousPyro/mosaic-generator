@@ -1,23 +1,44 @@
 
 import os
+import io
+import sys
+import platform
+import ctypes
+
+# Windows-specific setup for libcairo-2.dll
+if platform.system() == "Windows":
+    cairo_dll_path = os.path.join(os.path.dirname(__file__), ".cairo")
+    if not os.path.exists(cairo_dll_path):
+        print("❌ ERROR: Missing '.cairo' folder. Please unzip 'windows-cairo.zip' in this directory.")
+        sys.exit(1)
+    try:
+        os.add_dll_directory(cairo_dll_path)
+        # Force early load to catch errors
+        ctypes.CDLL("libcairo-2.dll")
+    except AttributeError:
+        # For Python < 3.8, fallback to modifying PATH (not ideal)
+        os.environ["PATH"] = cairo_dll_path + os.pathsep + os.environ["PATH"]
+    except OSError as e:
+        print("DLL load failed:", e)
+        raise
+
+import cairosvg
 from PIL import Image
 import numpy as np
-import io
-
-try:
-    import cairosvg
-except ImportError:
-    raise ImportError("Please install cairosvg: pip install cairosvg")
 
 def load_image(input_path, size=None):
     ext = os.path.splitext(input_path)[1].lower()
     if ext == ".svg":
         png_data = cairosvg.svg2png(url=input_path, output_width=size[0], output_height=size[1])
-        image = Image.open(io.BytesIO(png_data)).convert("RGBA")
+        image = Image.open(io.BytesIO(png_data))
     else:
-        image = Image.open(input_path).convert("RGBA")
+        image = Image.open(input_path)
         if size:
             image = image.resize(size, Image.LANCZOS)
+
+    if image.mode != "RGBA":
+        image = image.convert("RGBA")
+
     return image
 
 def colorize_tile(base_tile, target_color):
@@ -68,6 +89,10 @@ if __name__ == "__main__":
     parser.add_argument("--tiles", type=int, default=50, help="Number of tiles across and down (default 50)")
     parser.add_argument("--tile_size", type=int, default=60, help="Size of each tile in pixels (default 60)")
     args = parser.parse_args()
+
+    # 🔄 Force output file to .png
+    base, _ = os.path.splitext(args.output)
+    args.output = base + ".png"
 
     generate_mosaic(
         layout_path=args.input,

@@ -63,25 +63,36 @@ numpy>=1.20.0
 ```
 
 ---
-
 ## 🪟 Windows Setup Guide
 
-1. Install [MSYS2](https://www.msys2.org/).
-2. Open the MSYS2 MinGW64 shell.
-3. Run:
+### 🔁 Quick Setup
 
-   ```bash
-   pacman -Syu
-   pacman -S mingw-w64-x86_64-cairo mingw-w64-x86_64-gtk3
+If you're on Windows:
+
+1. Locate the file `cairo-windows.zip` included with this repo.
+2. Unzip it — it will create a `.cairo/` folder:
+   ```
+   mosaic-generator/
+   ├── self_mosaic_generator.py
+   ├── requirements.txt
+   ├── windows-cairo.zip
+   ├── .cairo/
+   │   ├── libcairo-2.dll
+   │   ├── ...
    ```
 
-4. Add `C:\msys64\mingw64\bin` to your PATH.
+3. Run the script:
+   ```bash
+   python self_mosaic_generator.py input.jpg output.png --tiles 60 --tile_size 60
+   ```
+
+> ⚠️ If you forget to unzip `windows-cairo.zip`, the script will warn you and exit.
 
 ---
 
 ## 🐧 Linux Setup Guide
 
-Most distros come with Cairo pre-installed. If not:
+Most distros already include Cairo. If not:
 
 ```bash
 sudo apt update
@@ -135,3 +146,12 @@ This will produce a 3840×3840 image (60×64 tiles).
 ## 📬 Questions?
 
 Drop me a note or fork the repo to experiment. Enjoy creating recursive, self-referential mosaics!
+
+
+## 🧾 Third-Party Licenses
+
+This project includes compiled shared libraries for Windows inside `cairo-windows.zip`.
+
+All third-party libraries (e.g. Cairo, FreeType, HarfBuzz, Fontconfig, Brotli) are open-source and redistributed under their respective licenses, which are included in the `.cairo/` folder after unzipping.
+
+See the included `LICENSE-*.txt` files in `.cairo/` for details.
