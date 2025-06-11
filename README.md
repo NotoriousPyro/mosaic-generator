@@ -5,7 +5,7 @@ Turn any image (PNG, JPEG, or SVG) into a beautiful **mosaic made of smaller tin
 ### Donate
 BTC: bc1qhwzln2zclq9lycnr300pvcxd3nx6my7ha7clq6
 
-SOL: 
+SOL: 9dxtJ8xJEWVeFv75eQ288ESKfofvfMrQBixyBHF6K54f
 
 ## 🖼️ What It Does
 Given an input image, this script:
